@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prescription Analyzer — MediScan AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/global.css"/>
+  <style>
+  /* ─── Page Layout ─── */
+  body { min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+  .page-wrap { flex: 1; display: flex; flex-direction: column; }
+
+  /* ─── Hero strip ─── */
+  .rx-hero {
+    background: linear-gradient(135deg, rgba(13,148,136,0.12) 0%, rgba(3,105,161,0.1) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 0 32px;
+    position: relative; overflow: hidden;
+  }
+  .rx-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(13,148,136,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .rx-hero-inner { display: flex; align-items: center; gap: 20px; }
+  .rx-hero-icon {
+    width: 64px; height: 64px; border-radius: 18px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--teal-lt), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; box-shadow: 0 4px 24px rgba(13,148,136,0.35);
+  }
+  .rx-hero h1 { font-family: var(--font-serif); font-size: 28px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .rx-hero p  { color: var(--text-dim); font-size: 14px; max-width: 480px; line-height: 1.6; }
+  .rx-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(13,148,136,0.12); border: 1px solid var(--teal-border);
+    border-radius: 20px; padding: 4px 12px; font-size: 11px;
+    color: var(--teal-lt); text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+
+  /* ─── Main grid ─── */
+  .rx-main { flex: 1; padding: 36px 0 60px; }
+  .rx-grid {
+    display: grid; grid-template-columns: 420px 1fr; gap: 28px;
+    align-items: start;
+  }
+
+  /* ─── Upload card ─── */
+  .upload-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px; position: sticky; top: 24px;
+  }
+  .card-title {
+    font-size: 13px; font-weight: 600; color: var(--white);
+    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title span { color: var(--teal-lt); }
+
+  /* Drop zone */
+  .drop-zone {
+    border: 2px dashed var(--border2); border-radius: 14px;
+    padding: 36px 20px; text-align: center; cursor: pointer;
+    transition: all .25s; background: var(--surface);
+    position: relative;
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--teal-lt);
+    background: var(--teal-glow);
+  }
+  .drop-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .drop-icon { font-size: 44px; margin-bottom: 12px; }
+  .drop-label { font-size: 14px; color: var(--text-dim); }
+  .drop-label strong { color: var(--teal-lt); }
+  .drop-hint { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+  /* Preview */
+  #preview-wrap { display: none; margin-top: 16px; }
+  #preview-img {
+    width: 100%; border-radius: 12px; border: 1px solid var(--border);
+    max-height: 280px; object-fit: contain; background: rgba(0,0,0,0.2);
+  }
+  .preview-name { font-size: 12px; color: var(--text-muted); margin-top: 8px; text-align: center; }
+
+  /* Analyze button */
+  #analyze-btn {
+    width: 100%; margin-top: 18px; padding: 14px;
+    background: linear-gradient(135deg, var(--teal-lt), var(--blue));
+    color: #fff; border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 600; font-family: var(--font-sans);
+    cursor: pointer; transition: all .2s;
+    box-shadow: 0 4px 20px rgba(13,148,136,0.3);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  #analyze-btn:hover:not(:disabled) { box-shadow: 0 6px 32px rgba(13,148,136,0.5); transform: translateY(-1px); }
+  #analyze-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  /* Tips */
+  .tips-box {
+    margin-top: 20px; background: rgba(245,158,11,0.05);
+    border: 1px solid rgba(245,158,11,0.15); border-radius: 12px; padding: 14px;
+  }
+  .tips-title { font-size: 11px; color: #b45309; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .tips-list { list-style: none; }
+  .tips-list li { font-size: 12px; color: var(--text-dim); padding: 3px 0; display: flex; gap: 7px; }
+  .tips-list li::before { content: "✓"; color: #f59e0b; flex-shrink: 0; }
+
+  /* ─── Results panel ─── */
+  .results-panel { min-height: 400px; }
+
+  /* Empty state */
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 400px; gap: 14px; text-align: center;
+  }
+  .empty-icon { font-size: 64px; opacity: .35; }
+  .empty-title { font-size: 18px; font-weight: 600; color: var(--text-dim); }
+  .empty-sub { font-size: 13px; color: var(--text-muted); max-width: 320px; line-height: 1.7; }
+
+  /* Loading state */
+  .loading-state {
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 400px; gap: 20px; text-align: center;
+  }
+  .loading-state.show { display: flex; }
+  .spinner {
+    width: 52px; height: 52px; border-radius: 50%;
+    border: 3px solid var(--border);
+    border-top-color: var(--teal-lt);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-title { font-size: 16px; font-weight: 600; color: var(--white); }
+  .loading-steps { display: flex; flex-direction: column; gap: 6px; }
+  .loading-step { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+  .loading-step.done { color: var(--teal-lt); }
+  .loading-step::before { content: '○'; }
+  .loading-step.done::before { content: '●'; color: var(--teal-lt); }
+
+  /* Results */
+  #results-content { display: none; }
+  #results-content.show { display: block; }
+
+  /* Prescription meta */
+  .rx-meta {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 22px; margin-bottom: 24px;
+    display: flex; flex-wrap: wrap; gap: 20px;
+  }
+  .rx-meta-item { display: flex; flex-direction: column; gap: 3px; }
+  .rx-meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); }
+  .rx-meta-value { font-size: 14px; font-weight: 600; color: var(--white); }
+
+  /* Summary bar */
+  .summary-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .summary-title { font-family: var(--font-serif); font-size: 22px; color: var(--white); }
+  .med-count-badge {
+    background: var(--teal-glow); border: 1px solid var(--teal-border);
+    color: var(--teal-lt); font-size: 13px; font-weight: 600;
+    padding: 5px 14px; border-radius: 20px;
+  }
+
+  /* Medicine cards */
+  .med-grid { display: flex; flex-direction: column; gap: 16px; }
+  .med-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px; transition: all .2s;
+    position: relative; overflow: hidden;
+  }
+  .med-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: linear-gradient(180deg, var(--teal-lt), var(--blue));
+    border-radius: 3px 0 0 3px;
+  }
+  .med-card:hover { border-color: var(--teal-border); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+
+  .med-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+  .med-num {
+    width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--teal-lt), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #fff;
+  }
+  .med-name-block { flex: 1; }
+  .med-name { font-size: 17px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+  .med-generic { font-size: 12px; color: var(--text-muted); font-style: italic; }
+  .med-company-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25);
+    color: #a5b4fc; font-size: 12px; font-weight: 500;
+    padding: 4px 12px; border-radius: 20px; flex-shrink: 0;
+  }
+
+  .med-details { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .med-detail { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; }
+  .med-detail-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .med-detail-value { font-size: 13px; color: var(--text); font-weight: 500; }
+
+  .med-uses { font-size: 13px; color: var(--text-dim); line-height: 1.65; padding: 12px 14px; background: rgba(13,148,136,0.05); border-radius: 9px; margin-bottom: 10px; }
+  .med-uses-label { font-size: 10px; color: var(--teal-lt); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 600; }
+
+  .med-warning {
+    font-size: 12px; color: #fbbf24; line-height: 1.6;
+    padding: 10px 13px; background: rgba(245,158,11,0.07);
+    border-left: 2px solid rgba(245,158,11,0.4); border-radius: 0 8px 8px 0;
+  }
+
+  /* Error state */
+  .error-state {
+    display: none; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 14px; padding: 24px; text-align: center;
+  }
+  .error-state.show { display: block; }
+  .error-icon { font-size: 36px; margin-bottom: 10px; }
+  .error-title { font-size: 16px; font-weight: 600; color: #fca5a5; margin-bottom: 6px; }
+  .error-msg { font-size: 13px; color: var(--text-dim); }
+
+  /* Export */
+  .export-bar {
+    display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap;
+  }
+  .export-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 500;
+    font-family: var(--font-sans); cursor: pointer; transition: all .2s; border: none;
+  }
+  .export-btn.primary {
+    background: var(--teal-glow); border: 1px solid var(--teal-border);
+    color: var(--teal-lt);
+  }
+  .export-btn.primary:hover { background: rgba(13,148,136,0.2); }
+  .export-btn.secondary {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .export-btn.secondary:hover { border-color: var(--border2); color: var(--text); }
+
+  /* New scan */
+  #new-scan-btn {
+    display: none; margin-top: 16px; width: 100%;
+    padding: 11px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text-dim); font-size: 13px;
+    font-family: var(--font-sans); cursor: pointer; transition: all .2s;
+  }
+  #new-scan-btn.show { display: block; }
+  #new-scan-btn:hover { border-color: var(--teal-border); color: var(--teal-lt); }
+
+  /* ─── Responsive ─── */
+  @media(max-width: 900px) {
+    .rx-grid { grid-template-columns: 1fr; }
+    .upload-card { position: relative; top: auto; }
+  }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="navbar" id="navbar" style="position:relative;">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <span class="logo-icon">🩺</span>
+      <span class="logo-text">MediScan <strong>AI</strong></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="how-it-works.html">How It Works</a></li>
+      <li><a href="consult.html">Consultation</a></li>
+      <li><a href="prescription.html" class="active">Rx Analyzer</a></li>
+    </ul>
+    <a href="prescription.html" class="nav-cta" style="background:linear-gradient(135deg,#6366f1,#0369a1);">Scan Prescription →</a>
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="../index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="consult.html">Consultation</a>
+    <a href="prescription.html">Rx Analyzer</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- Hero -->
+  <div class="rx-hero">
+    <div class="container rx-hero-inner">
+      <div class="rx-hero-icon">📋</div>
+      <div>
+        <div class="rx-badge">✨ New Feature</div>
+        <h1>Prescription Analyzer</h1>
+        <p>Upload any prescription image — our AI instantly extracts every medicine, its manufacturer, dosage, and usage instructions. No more guessing what your doctor wrote.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <main class="rx-main">
+    <div class="container">
+      <div class="rx-grid">
+
+        <!-- ── Upload Panel ── -->
+        <div class="upload-card">
+          <div class="card-title"><span>📤</span> Upload Prescription</div>
+
+          <div class="drop-zone" id="drop-zone">
+            <input type="file" id="file-input" accept="image/*" onchange="onFileSelect(event)"/>
+            <div class="drop-icon">🏥</div>
+            <div class="drop-label"><strong>Click to upload</strong> or drag & drop</div>
+            <div class="drop-hint">JPG, PNG, WEBP • Max 10 MB</div>
+          </div>
+
+          <div id="preview-wrap">
+            <img id="preview-img" src="" alt="Prescription preview"/>
+            <div class="preview-name" id="preview-name"></div>
+          </div>
+
+          <button id="analyze-btn" disabled onclick="analyze()">
+            <span id="btn-icon">🔍</span>
+            <span id="btn-text">Analyze Prescription</span>
+          </button>
+
+          <button id="new-scan-btn" onclick="resetAll()">↩ Scan Another Prescription</button>
+
+          <div class="tips-box">
+            <div class="tips-title">📸 Tips for best results</div>
+            <ul class="tips-list">
+              <li>Ensure good lighting — avoid shadows</li>
+              <li>Keep the prescription flat & straight</li>
+              <li>Include the full prescription in frame</li>
+              <li>Higher resolution = better accuracy</li>
+              <li>Avoid blurry or cropped images</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ── Results Panel ── -->
+        <div class="results-panel">
+
+          <!-- Empty state -->
+          <div class="empty-state" id="empty-state">
+            <div class="empty-icon">📄</div>
+            <div class="empty-title">No prescription uploaded yet</div>
+            <div class="empty-sub">Upload a prescription image on the left and click <strong>Analyze Prescription</strong> to extract medicines, dosages, and manufacturer details.</div>
+          </div>
+
+          <!-- Loading state -->
+          <div class="loading-state" id="loading-state">
+            <div class="spinner"></div>
+            <div class="loading-title">Analyzing your prescription…</div>
+            <div class="loading-steps">
+              <div class="loading-step done" id="step1">Uploading image</div>
+              <div class="loading-step" id="step2">Reading prescription text</div>
+              <div class="loading-step" id="step3">Identifying medicines</div>
+              <div class="loading-step" id="step4">Fetching manufacturer data</div>
+              <div class="loading-step" id="step5">Compiling results</div>
+            </div>
+          </div>
+
+          <!-- Error state -->
+          <div class="error-state" id="error-state">
+            <div class="error-icon">⚠️</div>
+            <div class="error-title">Analysis Failed</div>
+            <div class="error-msg" id="error-msg">Something went wrong. Please try again.</div>
+          </div>
+
+          <!-- Results -->
+          <div id="results-content">
+
+            <!-- Prescription meta -->
+            <div class="rx-meta" id="rx-meta"></div>
+
+            <!-- Medicines -->
+            <div class="summary-bar">
+              <div class="summary-title">Medicines Found</div>
+              <div class="med-count-badge" id="med-count">0 medicines</div>
+            </div>
+
+            <div class="med-grid" id="med-grid"></div>
+
+            <!-- Export -->
+            <div class="export-bar">
+              <button class="export-btn primary" onclick="exportJSON()">⬇ Export JSON</button>
+              <button class="export-btn secondary" onclick="printResults()">🖨 Print Results</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer-bar">
+    <div class="container">
+      ⚠️ <strong>Medical Disclaimer:</strong> This tool is for informational purposes only. Always follow your doctor's instructions. Never change or stop medications without consulting a qualified healthcare professional.
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <span class="logo-icon">🩺</span>
+          <span class="logo-text">MediScan <strong>AI</strong></span>
+        </div>
+        <p>AI-powered prescription analyzer & health assistant. BCA Final Year Project 2025–26.</p>
+      </div>
+      <div class="footer-links">
+        <div class="fl-col">
+          <h4>Navigation</h4>
+          <a href="../index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="consult.html">Consultation</a>
+          <a href="prescription.html">Rx Analyzer</a>
+        </div>
+        <div class="fl-col">
+          <h4>Technology</h4>
+          <a href="#">HTML / CSS / JS</a>
+          <a href="#">Python Flask</a>
+          <a href="#">Groq Vision AI</a>
+          <a href="#">REST API</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        © 2026 MediScan AI — BCA Final Year Project · For educational use only
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script src="../js/global.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════
+   PRESCRIPTION ANALYZER — MediScan AI v2.0
+   Handles: image upload, base64 encode, API call, render
+═══════════════════════════════════════════════════════ */
+
+const BACKEND = "http://localhost:5000";
+
+let currentFile   = null;
+let currentResult = null;
+
+// ── Drag & drop ──────────────────────────────────────────
+const dropZone = document.getElementById("drop-zone");
+
+dropZone.addEventListener("dragover", e => {
+  e.preventDefault();
+  dropZone.classList.add("drag-over");
+});
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+dropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropZone.classList.remove("drag-over");
+  const file = e.dataTransfer?.files?.[0];
+  if (file && file.type.startsWith("image/")) loadFile(file);
+});
+
+// ── File input ───────────────────────────────────────────
+function onFileSelect(e) {
+  const file = e.target.files?.[0];
+  if (file) loadFile(file);
+}
+
+function loadFile(file) {
+  currentFile = file;
+
+  // Show preview
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById("preview-img").src = ev.target.result;
+    document.getElementById("preview-wrap").style.display = "block";
+    document.getElementById("preview-name").textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
+  };
+  reader.readAsDataURL(file);
+
+  // Enable button
+  document.getElementById("analyze-btn").disabled = false;
+
+  // Reset results
+  showState("empty");
+}
+
+// ── Analyze ──────────────────────────────────────────────
+async function analyze() {
+  if (!currentFile) return;
+
+  document.getElementById("analyze-btn").disabled = true;
+  document.getElementById("btn-text").textContent = "Analyzing…";
+  document.getElementById("btn-icon").textContent = "⏳";
+  document.getElementById("new-scan-btn").classList.remove("show");
+
+  showState("loading");
+  animateSteps();
+
+  try {
+    // Convert to base64
+    const b64 = await toBase64(currentFile);
+    const base64Data = b64.split(",")[1];
+
+    const res = await fetch(`${BACKEND}/api/prescription`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: base64Data, type: currentFile.type }),
+      signal: AbortSignal.timeout(60000),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Server error");
+    if (data.error && !data.medicines) throw new Error(data.error);
+
+    currentResult = data;
+    renderResults(data);
+    showState("results");
+
+  } catch (err) {
+    let msg = err.message;
+    if (err.name === "TimeoutError") msg = "Request timed out. The image may be too large or the server is slow.";
+    if (msg.includes("fetch") || msg.includes("Failed")) msg = "Cannot connect to the Python backend. Make sure it's running on localhost:5000.";
+    showError(msg);
+  } finally {
+    document.getElementById("analyze-btn").disabled = false;
+    document.getElementById("btn-text").textContent = "Analyze Again";
+    document.getElementById("btn-icon").textContent = "🔍";
+    document.getElementById("new-scan-btn").classList.add("show");
+  }
+}
+
+function toBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload  = () => res(r.result);
+    r.onerror = () => rej(new Error("Failed to read file"));
+    r.readAsDataURL(file);
+  });
+}
+
+// ── Animate loading steps ────────────────────────────────
+function animateSteps() {
+  const steps = ["step1","step2","step3","step4","step5"];
+  steps.forEach(id => document.getElementById(id).classList.remove("done"));
+  let i = 0;
+  const tick = setInterval(() => {
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add("done");
+      i++;
+    } else {
+      clearInterval(tick);
+    }
+  }, 900);
+}
+
+// ── Render results ───────────────────────────────────────
+function renderResults(data) {
+  // Meta bar
+  const meta = document.getElementById("rx-meta");
+  meta.innerHTML = "";
+  const metaFields = [
+    { label: "Doctor", value: data.doctor_name },
+    { label: "Patient", value: data.patient_name },
+    { label: "Date", value: data.date },
+    { label: "Total Medicines", value: (data.medicines || []).length + " found" },
+  ];
+  metaFields.forEach(f => {
+    if (!f.value) return;
+    const item = mk("div", "rx-meta-item");
+    const lbl = mk("div", "rx-meta-label"); lbl.textContent = f.label;
+    const val = mk("div", "rx-meta-value"); val.textContent = f.value;
+    item.appendChild(lbl); item.appendChild(val);
+    meta.appendChild(item);
+  });
+  if (meta.children.length === 0) meta.style.display = "none";
+
+  // Count
+  const meds = data.medicines || [];
+  document.getElementById("med-count").textContent =
+    meds.length === 0 ? "No medicines found" : meds.length + " medicine" + (meds.length !== 1 ? "s" : "") + " found";
+
+  // Cards
+  const grid = document.getElementById("med-grid");
+  grid.innerHTML = "";
+
+  if (meds.length === 0) {
+    const empty = mk("div");
+    empty.style.cssText = "padding:32px;text-align:center;color:var(--text-muted);font-size:14px;";
+    empty.textContent = data.error || "No medicines could be identified. Please upload a clearer image.";
+    grid.appendChild(empty);
+    return;
+  }
+
+  meds.forEach((med, idx) => {
+    const card = mk("div", "med-card");
+
+    // Header
+    const hdr = mk("div", "med-header");
+    const num = mk("div", "med-num"); num.textContent = idx + 1;
+
+    const nameBlk = mk("div", "med-name-block");
+    const name = mk("div", "med-name"); name.textContent = med.name || "Unknown Medicine";
+    nameBlk.appendChild(name);
+    if (med.generic_name) {
+      const gen = mk("div", "med-generic"); gen.textContent = "Generic: " + med.generic_name;
+      nameBlk.appendChild(gen);
+    }
+
+    hdr.appendChild(num); hdr.appendChild(nameBlk);
+
+    if (med.company) {
+      const compBadge = mk("div", "med-company-badge");
+      compBadge.innerHTML = `🏭 ${med.company}`;
+      hdr.appendChild(compBadge);
+    }
+
+    card.appendChild(hdr);
+
+    // Detail pills
+    const details = [];
+    if (med.dosage)    details.push({ label: "Dosage",    value: med.dosage });
+    if (med.form)      details.push({ label: "Form",      value: med.form });
+    if (med.frequency) details.push({ label: "Frequency", value: med.frequency });
+    if (med.duration)  details.push({ label: "Duration",  value: med.duration });
+
+    if (details.length > 0) {
+      const detGrid = mk("div", "med-details");
+      details.forEach(d => {
+        const det = mk("div", "med-detail");
+        const lbl = mk("div", "med-detail-label"); lbl.textContent = d.label;
+        const val = mk("div", "med-detail-value"); val.textContent = d.value;
+        det.appendChild(lbl); det.appendChild(val);
+        detGrid.appendChild(det);
+      });
+      card.appendChild(detGrid);
+    }
+
+    // Uses
+    if (med.uses) {
+      const usesWrap = mk("div", "med-uses");
+      const usesLbl = mk("div", "med-uses-label"); usesLbl.textContent = "💊 What it treats";
+      const usesTxt = mk("div"); usesTxt.textContent = med.uses;
+      usesWrap.appendChild(usesLbl); usesWrap.appendChild(usesTxt);
+      card.appendChild(usesWrap);
+    }
+
+    // Warning
+    if (med.warnings) {
+      const warn = mk("div", "med-warning");
+      warn.textContent = "⚠️ " + med.warnings;
+      card.appendChild(warn);
+    }
+
+    grid.appendChild(card);
+  });
+
+  // Notes
+  if (data.notes) {
+    const notesCard = mk("div");
+    notesCard.style.cssText = "margin-top:16px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;font-size:13px;color:var(--text-dim);line-height:1.7;";
+    notesCard.innerHTML = "<strong style='color:var(--white);'>📝 Notes:</strong> " + esc(data.notes);
+    grid.appendChild(notesCard);
+  }
+}
+
+// ── State management ─────────────────────────────────────
+function showState(state) {
+  document.getElementById("empty-state").style.display    = state === "empty"   ? "flex" : "none";
+  document.getElementById("loading-state").className = "loading-state" + (state === "loading" ? " show" : "");
+  document.getElementById("error-state").className   = "error-state"   + (state === "error"   ? " show" : "");
+  document.getElementById("results-content").className = "show" === "" ? "" : (state === "results" ? "show" : "");
+  if (state !== "results") document.getElementById("results-content").classList.remove("show");
+  else document.getElementById("results-content").classList.add("show");
+}
+
+function showError(msg) {
+  document.getElementById("error-msg").textContent = msg;
+  showState("error");
+}
+
+// ── Export ───────────────────────────────────────────────
+function exportJSON() {
+  if (!currentResult) return;
+  const blob = new Blob([JSON.stringify(currentResult, null, 2)], { type: "application/json" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url; a.download = "prescription-analysis.json";
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function printResults() {
+  window.print();
+}
+
+// ── Reset ────────────────────────────────────────────────
+function resetAll() {
+  currentFile = null; currentResult = null;
+  document.getElementById("file-input").value = "";
+  document.getElementById("preview-wrap").style.display = "none";
+  document.getElementById("analyze-btn").disabled = true;
+  document.getElementById("btn-text").textContent = "Analyze Prescription";
+  document.getElementById("btn-icon").textContent = "🔍";
+  document.getElementById("new-scan-btn").classList.remove("show");
+  showState("empty");
+}
+
+// ── Utils ────────────────────────────────────────────────
+function mk(tag, cls = "") {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  return e;
+}
+function esc(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+</script>
+</body>
+</html>

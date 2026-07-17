@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediScan AI — Intelligent Health Diagnosis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/home.css"/>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">🩺</span>
+        <span class="logo-text">MediScan <strong>AI</strong></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="pages/about.html">About</a></li>
+        <li><a href="pages/how-it-works.html">How It Works</a></li>
+        <li><a href="pages/consult.html">Consultation</a></li>
+        <li><a href="pages/prescription.html">Rx Analyzer</a></li>
+      </ul>
+      <a href="pages/consult.html" class="nav-cta">Start Consultation →</a>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()">☰</button>
+    </div>
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html">Home</a>
+      <a href="pages/about.html">About</a>
+      <a href="pages/how-it-works.html">How It Works</a>
+      <a href="pages/consult.html">Consultation</a>
+      <a href="pages/prescription.html">Rx Analyzer</a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-glow g1"></div>
+      <div class="hero-glow g2"></div>
+      <div class="hero-grid"></div>
+    </div>
+    <div class="container hero-inner">
+      <div class="hero-badge">
+        <span class="badge-dot"></span> AI-Powered Health Assistant
+      </div>
+      <h1 class="hero-title">
+        Smart Health<br>
+        <em>Diagnosis</em> at Your<br>
+        Fingertips
+      </h1>
+      <p class="hero-sub">
+        Describe your symptoms in plain language. MediScan AI analyses them,
+        asks the right questions, and gives you clear, medically-grounded guidance — instantly.
+      </p>
+      <div class="hero-actions">
+        <a href="pages/consult.html" class="btn-primary">
+          Begin Free Consultation <span>→</span>
+        </a>
+        <a href="pages/how-it-works.html" class="btn-ghost">See How It Works</a>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-item"><span class="t-icon">🔒</span> Private & Secure</div>
+        <div class="trust-item"><span class="t-icon">⚡</span> Instant Results</div>
+        <div class="trust-item"><span class="t-icon">🏥</span> Medically Grounded</div>
+        <div class="trust-item"><span class="t-icon">🚨</span> Emergency Detection</div>
+        <div class="trust-item"><span class="t-icon">📋</span> Rx Analyzer</div>
+      </div>
+    </div>
+    <!-- Floating card -->
+    <div class="hero-card">
+      <div class="hcard-header">
+        <span class="hcard-dot"></span>
+        <span>MediScan AI is analysing…</span>
+      </div>
+      <div class="hcard-msg ai">
+        Based on your symptoms — headache, fatigue, and mild fever — here are the most likely conditions:
+      </div>
+      <div class="hcard-tags">
+        <span class="htag">Viral Infection</span>
+        <span class="htag">Tension Headache</span>
+        <span class="htag">Dehydration</span>
+      </div>
+      <div class="hcard-msg usr">
+        Should I see a doctor?
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STATS STRIP ── -->
+  <section class="stats-strip">
+    <div class="container stats-inner">
+      <div class="stat-block">
+        <span class="stat-num">2–4</span>
+        <span class="stat-lbl">Conditions Identified</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-block">
+        <span class="stat-num">24/7</span>
+        <span class="stat-lbl">Always Available</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-block">
+        <span class="stat-num">100%</span>
+        <span class="stat-lbl">Free to Use</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-block">
+        <span class="stat-num">AI</span>
+        <span class="stat-lbl">Groq Powered</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ── -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-label">What We Offer</div>
+      <h2 class="section-title">Everything You Need to<br>Understand Your Health</h2>
+      <p class="section-sub">A complete AI health assistant built on cutting-edge language model technology.</p>
+
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-icon-wrap teal">🔍</div>
+          <h3>Symptom Analysis</h3>
+          <p>Describe any symptom in natural language. Our AI understands context, severity, and combinations to pinpoint possible causes.</p>
+        </div>
+        <div class="feat-card featured">
+          <div class="feat-badge">Core Feature</div>
+          <div class="feat-icon-wrap white">💬</div>
+          <h3>Smart Conversation</h3>
+          <p>MediScan AI asks targeted follow-up questions — duration, severity, location — to build a complete clinical picture before responding.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon-wrap teal">🚨</div>
+          <h3>Emergency Detection</h3>
+          <p>Automatically identifies life-threatening symptom combinations and immediately advises calling emergency services.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon-wrap teal">💊</div>
+          <h3>Self-Care Guidance</h3>
+          <p>Practical, evidence-based recommendations for managing symptoms at home while knowing when to seek professional care.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon-wrap teal">🛡️</div>
+          <h3>Safe by Design</h3>
+          <p>Every response includes medical disclaimers. MediScan AI never replaces professional diagnosis — it supports informed decisions.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon-wrap teal">⚡</div>
+          <h3>Instant Response</h3>
+          <p>Powered by Groq's ultra-fast LLMs — one of the fastest AI inference platforms — responses in seconds, not days.</p>
+        </div>
+        <div class="feat-card featured" style="grid-column: span 2;">
+          <div class="feat-badge">New Feature</div>
+          <div class="feat-icon-wrap white">📋</div>
+          <h3>Prescription Analyzer</h3>
+          <p>Upload any prescription image and our AI extracts every medicine name, manufacturer, dosage, frequency, and what each drug treats — instantly. Powered by Groq Vision AI.</p>
+          <a href="pages/prescription.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:9px 20px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:9px;color:#fff;font-size:13px;font-weight:600;">Try Rx Analyzer →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS (preview) ── -->
+  <section class="how-preview">
+    <div class="container">
+      <div class="how-inner">
+        <div class="how-text">
+          <div class="section-label">Simple Process</div>
+          <h2>From Symptoms to<br>Clarity in Minutes</h2>
+          <p>No appointments. No waiting rooms. Just describe how you feel and get clear, actionable health guidance backed by AI.</p>
+          <div class="steps-list">
+            <div class="step">
+              <div class="step-num">01</div>
+              <div>
+                <strong>Describe Your Symptoms</strong>
+                <p>Tell MediScan AI what you're experiencing in your own words.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">02</div>
+              <div>
+                <strong>Answer Follow-up Questions</strong>
+                <p>The AI gathers more detail — duration, severity, location.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">03</div>
+              <div>
+                <strong>Receive Your Analysis</strong>
+                <p>Get possible conditions, self-care tips, and next steps.</p>
+              </div>
+            </div>
+          </div>
+          <a href="pages/how-it-works.html" class="btn-outline">Full Process Details →</a>
+        </div>
+        <div class="how-visual">
+          <div class="chat-preview">
+            <div class="cp-header">
+              <div class="cp-avatar">🩺</div>
+              <div>
+                <div class="cp-name">MediScan AI</div>
+                <div class="cp-status"><span class="online-dot"></span> Online</div>
+              </div>
+            </div>
+            <div class="cp-body">
+              <div class="cp-bubble ai">Hello! Tell me what symptoms you're experiencing.</div>
+              <div class="cp-bubble usr">I have a severe headache on one side and feel nauseous.</div>
+              <div class="cp-bubble ai">How long have you had this? Is there light sensitivity?</div>
+              <div class="cp-bubble usr">About 4 hours. Yes, light hurts my eyes.</div>
+              <div class="cp-bubble ai typing">
+                <span class="td"></span><span class="td"></span><span class="td"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SYMPTOMS WE COVER ── -->
+  <section class="symptoms-section">
+    <div class="container">
+      <div class="section-label">Coverage</div>
+      <h2 class="section-title">Common Symptoms We Analyse</h2>
+      <div class="symptoms-grid">
+        <a href="pages/consult.html" class="sym-card">
+          <span class="sym-icon">🤕</span>
+          <span>Headache & Migraine</span>
+        </a>
+        <a href="pages/consult.html" class="sym-card">
+          <span class="sym-icon">🤒</span>
+          <span>Fever & Chills</span>
+        </a>
+        <a href="pages/consult.html" class="sym-card">
+          <span class="sym-icon">😮‍💨</span>
+          <span>Breathing Issues</span>
+        </a>
+        <a href="pages/consult.html" class="sym-card">
+          <span class="sym-icon">🫁</span>
+          <span>Chest Pain</span>
+        </a>
+        <a href="pages/consult.html" class="sym-card">
+          <span class="sym-icon">🤢</span>
+          <span>Nausea & Vomiting</span>
+        </a>
+        <a href="pages/consult.html" class="sym-card">
+          <span class="sym-icon">🦴</span>
+          <span>Joint & Muscle Pain</span>
+        </a>
+        <a href="pages/consult.html" class="sym-card">
+          <span class="sym-icon">🩹</span>
+          <span>Skin Rash</span>
+        </a>
+        <a href="pages/consult.html" class="sym-card">
+          <span class="sym-icon">😴</span>
+          <span>Fatigue & Weakness</span>
+        </a>
+        <a href="pages/consult.html" class="sym-card sym-more">
+          <span class="sym-icon">+</span>
+          <span>Many More…</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA BANNER ── -->
+  <section class="cta-banner">
+    <div class="container cta-inner">
+      <div class="cta-glow"></div>
+      <h2>Ready to Understand<br>Your Symptoms?</h2>
+      <p>Start a free AI consultation right now — no sign up, no waiting.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+        <a href="pages/consult.html" class="btn-primary large">
+          Start Free Consultation →
+        </a>
+        <a href="pages/prescription.html" class="btn-ghost" style="font-size:17px;padding:18px 36px;border-radius:14px;">
+          📋 Scan Prescription
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DISCLAIMER ── -->
+  <div class="disclaimer-bar">
+    <div class="container">
+      ⚠️ <strong>Medical Disclaimer:</strong> MediScan AI is a BCA academic project for educational purposes only.
+      It does not replace professional medical diagnosis or treatment. Always consult a qualified doctor.
+      For emergencies, call <strong>911</strong> immediately.
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <span class="logo-icon">🩺</span>
+          <span class="logo-text">MediScan <strong>AI</strong></span>
+        </div>
+        <p>An AI-powered health symptom diagnosis assistant. BCA Final Year Project 2025–26.</p>
+      </div>
+      <div class="footer-links">
+        <div class="fl-col">
+          <h4>Navigation</h4>
+          <a href="index.html">Home</a>
+          <a href="pages/about.html">About</a>
+          <a href="pages/how-it-works.html">How It Works</a>
+          <a href="pages/consult.html">Consultation</a>
+        </div>
+        <div class="fl-col">
+          <h4>Technology</h4>
+          <a href="#">HTML / CSS / JS</a>
+          <a href="#">Python Flask</a>
+          <a href="#">Anthropic Claude</a>
+          <a href="#">REST API</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        © 2026 MediScan AI — BCA Final Year Project &nbsp;·&nbsp; For educational use only
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/global.js"></script>
+</body>
+</html>
